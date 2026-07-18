@@ -3,10 +3,10 @@ This project watches the opening of slots in gopichand academy site
 
 How this is going to work:
 1. We are directly reading from the API that the website calls when we open the page
-2.  i. The URL has two parts - 
-        a. path : https://adminbooking.gopichandacademy.com/API/Get/Calender
-        b. query string : venue_id=3&date=2026-07-18
-        The `venue_id` and `date` are the parameters here. 
+2.  i. The URL has two parts - <br>
+        a. path : https://adminbooking.gopichandacademy.com/API/Get/Calender <br>
+        b. query string : venue_id=3&date=2026-07-18 <br>
+        The `venue_id` and `date` are the parameters here. <br> 
    ii. It returns the json file in the sample format:
    ```json
    {
@@ -103,9 +103,9 @@ How this is going to work:
     }
    ```
 3. The logic to check whether slots are open or not is simple. We just check whether value of court_all_slots/court_booked_slots/court_available_slots are empty or not. We could've gone for more definitive and rigorous logic by checking one of the court_available_slots is non-zero.
-4. If the slots were open, we send a message to my telegram using a bot. This bot was created using botfather.
-   i. The botfather generates a `BOT_TOKEN` for HTTP API. We will know the `CHAT_ID` once we access the API. 
-   ii. The `BOT_TOKEN` and `CHAT_ID` were masked using *secrets* feature in github.
+4. If the slots were open, we send a message to my telegram using a bot. This bot was created using botfather.<br>
+   i. The botfather generates a `BOT_TOKEN` for HTTP API. We will know the `CHAT_ID` once we access the API. <br>
+   ii. The `BOT_TOKEN` and `CHAT_ID` were masked using *secrets* feature in github.<br>
 
 Few more ideas:
 1. I will look to make this more complete project by looking to automate till payment.

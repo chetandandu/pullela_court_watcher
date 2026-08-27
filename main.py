@@ -79,7 +79,15 @@ def format_message(venue_id, date_str, court_entries):
 
     return "\n".join(lines)
 
-
+def prune_old_state(state, valid_dates):
+    """Keep only state keys matching dates we still care about."""
+    pruned = {}
+    for key, value in state.items():
+        # key format: v{venue_id}_d{date}_c{court_id}
+        if any(f"_d{d}_" in key for d in valid_dates):
+            pruned[key] = value
+    return pruned
+    
 def main():
     state = load_state()
     # dates_to_check = get_weekend_dates_this_week()
@@ -130,7 +138,8 @@ def main():
                 send_telegram(message)
             else:
                 print(f"Venue {venue_id}, {date_str}: nothing new to report.")
-
+    
+    state = prune_old_state(state, dates_to_check)
     save_state(state)
     
 if __name__ == "__main__":

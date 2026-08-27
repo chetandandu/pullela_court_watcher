@@ -91,7 +91,7 @@ def prune_old_state(state, valid_dates):
 def main():
     state = load_state()
     # dates_to_check = get_weekend_dates_this_week()
-    dates_to_check = ["2026-08-28"]  #JFT
+    dates_to_check = ["2026-08-27"]  #JFT
 
     if not dates_to_check:
         print("No upcoming weekend days left this week. Nothing to check.")

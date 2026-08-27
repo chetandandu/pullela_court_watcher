@@ -11,6 +11,11 @@ STATE_FILE = "state.json"
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"]
 
+VENUE_NAMES = {
+    1: "Kotak Pullela - ISB",
+    2: "Yonex Pullela - ISB",
+    3: "Sai Gopichand - ORR",
+}
 
 def get_weekend_dates_this_week():
     """Return Saturday & Sunday of the current week, skipping any already past."""
@@ -64,11 +69,21 @@ def parse_available_slots(court_data):
     return open_slots
 
 
+def format_message(venue_id, date_str, court_entries):
+    venue_name = VENUE_NAMES.get(venue_id, f"Venue {venue_id}")
+    lines = [f"🏸 <b>New Slots Opened!</b>", f"{venue_name} | 📅 {date_str}\n"]
+
+    for entry in court_entries:
+        slots_str = ", ".join(entry["new_slots"])
+        lines.append(f"  Court {entry['court_name']}: {slots_str}")
+
+    return "\n".join(lines)
+
+
 def main():
     state = load_state()
-    # dates_to_check = get_weekend_dates_this_week()
-    dates_to_check = ["2026-08-28"]  # JFT
-    
+    dates_to_check = get_weekend_dates_this_week()
+
     if not dates_to_check:
         print("No upcoming weekend days left this week. Nothing to check.")
         return
@@ -86,6 +101,7 @@ def main():
                 continue
 
             result = data.get("Result", {})
+            court_entries = []
 
             for court_id, court_data in result.items():
                 court_name = court_data.get("court_name", court_id)
@@ -98,22 +114,23 @@ def main():
                 new_slots = currently_open - previously_seen
 
                 if new_slots:
-                    message = (
-                        f"🏸 New slot(s) opened!\n"
-                        f"Venue: {venue_id} | Court: {court_name}\n"
-                        f"Date: {date_str}\n"
-                        f"Time(s): {', '.join(sorted(new_slots))}"
-                    )
-                    print(message)
-                    send_telegram(message)
+                    court_entries.append({
+                        "court_name": court_name,
+                        "new_slots": sorted(new_slots),
+                    })
                 else:
                     print(f"Venue {venue_id}, Court {court_name}, {date_str}: no new slots.")
 
-                # Update state with whatever is currently open (so next run compares correctly)
                 state[state_key] = sorted(currently_open)
 
+            if court_entries:
+                message = format_message(venue_id, date_str, court_entries)
+                print(message)
+                send_telegram(message)
+            else:
+                print(f"Venue {venue_id}, {date_str}: nothing new to report.")
+
     save_state(state)
-
-
+    
 if __name__ == "__main__":
     main()

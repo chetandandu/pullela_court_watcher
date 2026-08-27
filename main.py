@@ -28,7 +28,7 @@ def get_weekend_dates_this_week():
 
 def send_telegram(message):
     url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": message})
+    requests.post(url, data={"chat_id": CHAT_ID, "text": message, "parse_mode": "HTML"})
 
 
 def load_state():
